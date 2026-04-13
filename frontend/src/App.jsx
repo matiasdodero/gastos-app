@@ -2,34 +2,45 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
-  const [mensaje, setMensaje] = useState('Cargando...')
+  const [gastos, setGastos] = useState([])
   const [error, setError] = useState('')
+  const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/saludo')
+    fetch('http://localhost:5000/api/gastos')
       .then((response) => {
         if (!response.ok) {
-          throw new Error('La API respondió con error')
+          throw new Error('No se pudo obtener la lista de gastos')
         }
         return response.json()
       })
       .then((data) => {
-        setMensaje(data.mensaje)
+        setGastos(data)
+        setCargando(false)
       })
       .catch((err) => {
         setError(err.message)
+        setCargando(false)
       })
   }, [])
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
       <h1>Gastos App</h1>
-      <p>Prueba de conexión entre React y .NET</p>
+      <p>Lista de gastos traída desde .NET</p>
 
-      {error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <p>Respuesta del backend: {mensaje}</p>
+      {cargando && <p>Cargando gastos...</p>}
+
+      {error && <p>Error: {error}</p>}
+
+      {!cargando && !error && (
+        <ul>
+          {gastos.map((gasto) => (
+            <li key={gasto.id}>
+              {gasto.descripcion} - ${gasto.monto} - {gasto.categoria}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   )

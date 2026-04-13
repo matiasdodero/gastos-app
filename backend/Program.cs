@@ -15,9 +15,18 @@ var app = builder.Build();
 
 app.UseCors("frontend");
 
-app.MapGet("/api/saludo", () =>
+var gastos = new List<Gasto>
 {
-    return new { mensaje = "Hola desde .NET" };
+    new Gasto(1, "Supermercado", 12500, "Comida"),
+    new Gasto(2, "Sube", 3000, "Transporte"),
+    new Gasto(3, "Netflix", 5000, "Entretenimiento")
+};
+
+app.MapGet("/api/gastos", () =>
+{
+    return gastos;
 });
 
 app.Run();
+
+record Gasto(int Id, string Descripcion, decimal Monto, string Categoria);
