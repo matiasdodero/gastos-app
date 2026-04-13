@@ -27,6 +27,24 @@ app.MapGet("/api/gastos", () =>
     return gastos;
 });
 
+app.MapPost("/api/gastos", (NuevoGasto nuevoGasto) =>
+{
+    var nuevoId = gastos.Count == 0 ? 1 : gastos.Max(g => g.Id) + 1;
+
+    var gasto = new Gasto(
+        nuevoId,
+        nuevoGasto.Descripcion,
+        nuevoGasto.Monto,
+        nuevoGasto.Categoria
+    );
+
+    gastos.Add(gasto);
+
+    return Results.Created($"/api/gastos/{gasto.Id}", gasto);
+});
+
 app.Run();
 
 record Gasto(int Id, string Descripcion, decimal Monto, string Categoria);
+
+record NuevoGasto(string Descripcion, decimal Monto, string Categoria);
